@@ -1,9 +1,9 @@
-# 💰 Family Finance Web App
+# Family Finance Web App
 
 A simple and modern web application for managing family finances, built with **Next.js** on the frontend and **.NET Core Web API** on the backend.
 
 
-## 🚀 Tech Stack
+## Tech Stack
 
 **Frontend:**
 
@@ -26,7 +26,7 @@ Make sure you have the following installed:
 - (Optional) [Visual Studio Code](https://code.visualstudio.com/) with relevant extensions
 
 
-## 📂 Client Setup (Frontend)
+## Client Setup (Frontend)
 
 Navigate to the `client` directory and install dependencies:
 
@@ -35,9 +35,8 @@ cd client
 npm install
 npm run dev
 ```
----
 
-## 📂 Server Setup (Backend)
+## Server Setup (Backend)
 
 Navigate to the `client` directory and install dependencies:
 
