@@ -45,6 +45,14 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapGet("/hello", () =>
+{
+    string hello = "hello";
+
+    return hello;
+}).WithName("GetHello");
+
+
 app.Run();
 
 // WeatherForecast record definition

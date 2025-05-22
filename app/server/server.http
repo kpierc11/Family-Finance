@@ -4,3 +4,6 @@ GET {{server_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+GET {{server_HostAddress}}/hello/
+Accept: application/json
