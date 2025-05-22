@@ -42,6 +42,7 @@ Navigate to the `client` directory and install dependencies:
 ```bash
 cd client
 npm install
+npm run dev
 ```
 ---
 
