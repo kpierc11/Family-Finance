@@ -2,7 +2,6 @@
 
 A simple and modern web application for managing family finances, built with **Next.js** on the frontend and **.NET Core Web API** on the backend.
 
----
 
 ## 🚀 Tech Stack
 
@@ -26,7 +25,6 @@ Make sure you have the following installed:
 - [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v6 or later)
 - (Optional) [Visual Studio Code](https://code.visualstudio.com/) with relevant extensions
 
----
 
 ## 📂 Client Setup (Frontend)
 
