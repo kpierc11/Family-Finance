@@ -42,8 +42,10 @@ Navigate to the `client` directory and install dependencies:
 ```bash
 cd client
 npm install
+```
+---
 
-## 📂 Server Setup (Frontend)
+## 📂 Server Setup (Backend)
 
 Navigate to the `client` directory and install dependencies:
 
