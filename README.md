@@ -19,11 +19,6 @@ A simple and modern web application for managing family finances, built with **N
 
 ---
 
-## 📦 Project Structure
-
-
----
-
 ## 🛠️ Prerequisites
 
 Make sure you have the following installed:
