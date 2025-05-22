@@ -21,3 +21,24 @@ A simple and modern web application for managing family finances, built with **N
 
 ## 📦 Project Structure
 
+
+---
+
+## 🛠️ Prerequisites
+
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+- [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v6 or later)
+- (Optional) [Visual Studio Code](https://code.visualstudio.com/) with relevant extensions
+
+---
+
+## 📂 Client Setup (Frontend)
+
+Navigate to the `client` directory and install dependencies:
+
+```bash
+cd client
+npm install
