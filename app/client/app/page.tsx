@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="flex justify-center mt-5">
       <div className="w-full max-w-4xl space-y-4">
-        <div className="mt-5">Weather Data</div>
+        <div className="mt-5">yoyoyoyoyyoyoyo</div>
         {forecasts.map((forecast) => (
           <div
             className="flex justify-between gap-4 bg-white/5 p-4 rounded-md shadow-sm backdrop-blur-sm"
