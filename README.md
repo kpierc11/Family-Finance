@@ -16,7 +16,7 @@ A simple and modern web application for managing family finances, built with **N
 
 - .NET Core Web API
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 Make sure you have the following installed:
 
