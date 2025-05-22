@@ -42,3 +42,11 @@ Navigate to the `client` directory and install dependencies:
 ```bash
 cd client
 npm install
+
+## 📂 Server Setup (Frontend)
+
+Navigate to the `client` directory and install dependencies:
+
+```bash
+cd server
+npm dotnet run
