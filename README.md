@@ -42,4 +42,4 @@ Navigate to the `client` directory and install dependencies:
 
 ```bash
 cd server
-npm dotnet run
+dotnet run
