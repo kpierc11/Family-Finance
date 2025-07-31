@@ -1,0 +1,19 @@
+# Root node modules (if any)
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# dotenv files (if you keep any at the root)
+.env
+.env.local
