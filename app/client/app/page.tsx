@@ -7,11 +7,11 @@ import Login from "./login/page";
 export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  if (loggedIn) {
+  if (!loggedIn) {
     return <Login onLogin={() => setLoggedIn(true)}/>;
   } else {
     return (
-      <Dashboard></Dashboard>
+      <Dashboard onLogin={() => setLoggedIn(false)} ></Dashboard>
     );
   }
 }

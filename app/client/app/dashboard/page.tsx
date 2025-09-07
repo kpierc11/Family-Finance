@@ -1,16 +1,32 @@
-export default function Dashboard() {
+export default function Dashboard({onLogin}:any) {
+
+
+  function handleLogout()
+  {
+      onLogin();
+  }
+
+
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <nav className="w-30 bg-gray-800 text-white p-4">
         <ul className="space-y-4">
-          {["Home", "About", "Services", "Contact"].map((item) => (
-            <li key={item}>
+            <li>
               <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">
-                {item}
+                Home
+              </a>
+               <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">
+                About
+              </a>
+               <a href="#" className="block px-3 py-2 rounded hover:bg-gray-700">
+                Stats
+              </a>
+               <a onClick={handleLogout} href="#" className="block px-3 py-2 rounded hover:bg-gray-700">
+                Logout
               </a>
             </li>
-          ))}
         </ul>
       </nav>
 
