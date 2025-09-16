@@ -14,7 +14,7 @@ A simple and modern web application for managing family finances, built with **N
 
 **Backend:**
 
-- .NET Core Web API
+- C++ Drogon
 
 ## Prerequisites
 
