@@ -14,7 +14,7 @@ A simple and modern web application for managing family finances, built with **N
 
 **Backend:**
 
-- .NET Core Web API
+- C++ Drogon
 
 ## Prerequisites
 
@@ -38,8 +38,27 @@ npm run dev
 
 ## Server Setup (Backend)
 
-Navigate to the `client` directory and install dependencies:
+# 🚀 C++ Backend Server (Drogon + Conan + CMake)
+
+[![C++](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
+[![CMake](https://img.shields.io/badge/CMake-3.15%2B-brightgreen.svg)](https://cmake.org/)
+[![Conan](https://img.shields.io/badge/Conan-2.x-orange.svg)](https://conan.io/)
+
+This project uses the [Drogon C++ framework](https://github.com/drogonframework/drogon) for the backend.  
+Dependencies are managed with **Conan**, and the project is built with **CMake**.
+
+---
+
+## 📦 Prerequisites
+
+Make sure the following are installed:
+
+- **C++17 compiler** (e.g. Visual Studio 2022, GCC ≥ 7, or Clang ≥ 6)
+- [CMake ≥ 3.15](https://cmake.org/download/)
+- [Conan ≥ 2.x](https://docs.conan.io/2/installation.html)
+
+Check versions:
 
 ```bash
-cd server
-dotnet run
+cmake --version
+conan --version
