@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
-export default function LoginForm({ onLogin }: { onLogin: () => void }) {
+export default function SignUpForm({ onLogin }: any) {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const email = document.querySelector<HTMLInputElement>("#email");
     const password = document.querySelector<HTMLInputElement>("#password");
 
-    console.log(email,password);
+    console.log(email, password);
     if (email && password) {
-      fetch("http://localhost:3001/login", {
+      fetch("http://localhost:3001/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,11 +22,11 @@ export default function LoginForm({ onLogin }: { onLogin: () => void }) {
           return result.json();
         })
         .then((data) => {
-            console.log(data);
-          if (data.loggedIn) {
-            onLogin();
+          console.log(data);
+          if (data.registeredUser) {
+            alert(data.message || "Registration success");
           } else {
-            alert(data.message || "Login failed");
+            alert(data.message || "Registration failed");
           }
         });
     }
@@ -41,7 +41,7 @@ export default function LoginForm({ onLogin }: { onLogin: () => void }) {
           className="mx-auto h-10 w-auto"
         />
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          Sign in to your account
+          Sign Up for an Account
         </h2>
       </div>
 
@@ -74,18 +74,28 @@ export default function LoginForm({ onLogin }: { onLogin: () => void }) {
               >
                 Password
               </label>
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
             </div>
             <div className="mt-2">
               <input
                 id="password"
+                type="password"
+                name="password"
+                required
+                autoComplete="current-password"
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="password"
+                className="block text-sm/6 font-medium text-gray-900"
+              >
+                Confirm Password
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                id="confirm-password"
                 type="password"
                 name="password"
                 required
@@ -98,20 +108,19 @@ export default function LoginForm({ onLogin }: { onLogin: () => void }) {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center cursor-pointer rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Sign in
+              Register
             </button>
           </div>
         </form>
-
         <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Not a member?
+          Already a member?
           <a
-            href="/register"
+            href="/login"
             className="font-semibold text-indigo-600 hover:text-indigo-500 ml-2"
           >
-            Register Now. 
+            Login Here.
           </a>
         </p>
       </div>

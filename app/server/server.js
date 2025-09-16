@@ -22,18 +22,45 @@ app.listen(port, () => {
 });
 
 app.post("/register", (req, res) => {
-  // bcrypt.hash(password, saltRounds, function (err, hashPwd) {
-  //   db.one(
-  //     'INSERT INTO public."Users"(email, password) VALUES($1, $2) RETURNING *',
-  //     [email, hashPwd]
-  //   )
-  //     .then((data) => {
-  //       console.log("Inserted row:", data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("ERROR:", error);
-  //     });
-  // });
+  const { email, password } = req.body;
+
+  let userExists = false;
+
+  bcrypt.hash(password, saltRounds, (err, hashPwd) => {
+    if (err) {
+      console.error("Bcrypt error:", err);
+      return res.status(500).json({ error: "Error hashing password" });
+    }
+
+    db.one('SELECT "email" FROM public."Users" WHERE "email" = $1', [email])
+      .then((data) => {
+        console.log("User with this email found: ", data);
+        userExists = true;
+        return res.status(401).json({message: "User already exists", registeredUser: false });
+      })
+      .catch((error) => {
+        userExists = false;
+        console.error("DB ERROR no user found.", error);
+        return res.status(401).json({ registeredUser: false });
+      });
+
+    if (!userExists) {
+      db.one(
+        'INSERT INTO public."Users"(email, password) VALUES($1, $2) RETURNING *',
+        [email, hashPwd]
+      )
+        .then((data) => {
+          console.log("Inserted row:", data);
+          res
+            .status(201)
+            .json({ message: "User registered successfully", registeredUser: true });
+        })
+        .catch((error) => {
+          console.error("DB ERROR:", error);
+          res.status(500).json({ error: "Database error" });
+        });
+    }
+  });
 });
 
 app.post("/login", (req, res) => {
@@ -66,6 +93,6 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.get("/login", (req, res) => {
-  res.json({ loggedIn: "true" });
-});
+// app.get("/login", (req, res) => {
+//   res.json({ loggedIn: "true" });
+// });

@@ -8,10 +8,8 @@ export default function Home() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   if (!loggedIn) {
-    return <Login onLogin={() => setLoggedIn(true)}/>;
+    return <Login onLogin={() => setLoggedIn(true)} />;
   } else {
-    return (
-      <Dashboard onLogin={() => setLoggedIn(false)} ></Dashboard>
-    );
+    return <Dashboard onLogin={() => setLoggedIn(false)}></Dashboard>;
   }
 }
