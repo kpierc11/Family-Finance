@@ -1,4 +1,19 @@
+import { useEffect } from "react";
+
 export default function Dashboard({ onLogin }: any) {
+  useEffect(() => {
+    fetch("http://localhost:8000/hi", {
+      method: "GET",
+      headers: { "Content-Type": "application/json",},
+    })
+      .then((data) => {
+        return data.json();
+      })
+      .then((data) => {
+        console.log(data);
+      });
+  });
+
   function handleLogout() {
     onLogin();
   }
