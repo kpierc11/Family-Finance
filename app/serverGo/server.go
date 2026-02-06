@@ -3,77 +3,84 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "db.xxypdbhtwfcokspanism.supabase.co"
-	port     = 5432
-	user     = "postgres"
-	password = "Ninjawarrior210!"
-	dbname   = "postgres"
-)
+var db *sql.DB
 
-type album struct {
-	ID     string  `json:"id"`
-	Title  string  `json:"title"`
-	Artist string  `json:"artist"`
-	Price  float64 `json:"price"`
+type User struct {
+	ID       string `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-// albums slice to seed record album data.
-var albums = []album{
-	{ID: "1", Title: "Blue Traina", Artist: "John Coltrane", Price: 56.99},
-	{ID: "2", Title: "Jeru", Artist: "Gerry Mulligan", Price: 17.99},
-	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
-}
-
-func getAlbums(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, albums)
-}
-
-func getUser(c *gin.Context, db *sql.DB) {
+func getUser(c *gin.Context) {
 	//See what the request is and any data associated with it.
-	c.IndentedJSON(http.StatusOK, c.Request.RequestURI)
-
-	err := db.QueryRow("SELECT * FROM Users")
+	rows, err := db.Query(`SELECT id, email, password FROM "Users";`)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.ID, &user.Email, &user.Password); err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("User id %v email %v password %v \n", user.ID, user.Email)
+		users = append(users, user)
+	}
+
+	c.JSON(http.StatusOK, users)
 
 }
 
 func main() {
+
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Print("No .env file found")
+	}
+
+	directory, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Couldn't find working directory", err)
+	}
+	fmt.Println(directory)
+
+	dsn, exists := os.LookupEnv("DATABASE_URL")
+	if !exists {
+		log.Fatalf("Couldn't find env variable")
+	}
+
+	//Setup database
+	db, err = sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pingErr := db.Ping()
+	if pingErr != nil {
+		log.Fatal(pingErr)
+	}
+	fmt.Println("Connected!")
+
 	router := gin.Default()
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:3000"}
 
-	postgresConnInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	//Setup database
-	db, err := sql.Open("postgres", postgresConnInfo)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	// Initialize the first connection to the database, to see if everything works correctly.
-	// Make sure to check the error.
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully connected!")
-
 	router.Use(cors.New(config))
-	router.GET("/albums", getAlbums)
 	router.GET("/user", getUser)
 
 	router.Run("localhost:8000")
