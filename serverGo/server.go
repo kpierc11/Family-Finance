@@ -44,6 +44,25 @@ func getUser(c *gin.Context) {
 
 }
 
+func registerUser(c *gin.Context) {
+	email := c.QueryMap("email")
+	password := c.PostFormMap("password")
+
+	fmt.Printf("email: %v; password: %v", email, password)
+}
+
+func loginUser(c *gin.Context) {
+	email := c.QueryMap("email")
+	password := c.PostFormMap("password")
+
+	fmt.Printf("email: %v; password: %v", email, password)
+
+	c.JSON(http.StatusOK,
+		gin.H{
+			"loggedIn": "true",
+		})
+}
+
 func main() {
 
 	err := godotenv.Load(".env")
@@ -76,12 +95,16 @@ func main() {
 	fmt.Println("Connected!")
 
 	router := gin.Default()
+	router.SetTrustedProxies([]string{"localhost:5173"})
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowOrigins = []string{"http://localhost:5173"}
 
 	router.Use(cors.New(config))
+
 	router.GET("/user", getUser)
+	router.POST("/login", loginUser)
+	router.POST("/register")
 
 	router.Run("localhost:8000")
 }
