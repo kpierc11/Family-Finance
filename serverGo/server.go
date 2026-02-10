@@ -21,6 +21,11 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type Login struct {
+	Email    string
+	Password string
+}
+
 func getUser(c *gin.Context) {
 	//See what the request is and any data associated with it.
 	rows, err := db.Query(`SELECT id, email, password FROM "Users";`)
@@ -36,7 +41,7 @@ func getUser(c *gin.Context) {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("User id %v email %v password %v \n", user.ID, user.Email)
+		fmt.Printf("User id %v email %v \n", user.ID, user.Email)
 		users = append(users, user)
 	}
 
@@ -45,22 +50,61 @@ func getUser(c *gin.Context) {
 }
 
 func registerUser(c *gin.Context) {
-	email := c.QueryMap("email")
-	password := c.PostFormMap("password")
 
-	fmt.Printf("email: %v; password: %v", email, password)
+	var json Login
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	row := db.QueryRow(`SELECT email FROM "users" WHERE email = $1`, json.Email)
+
+	var user User
+	err := row.Scan(&user.Email)
+
+	if err != nil {
+		_, insertErr := db.Exec(`INSERT INTO "users" (email,password) VALUES ($1, $2)`, json.Email, json.Password)
+		if insertErr != nil {
+			log.Fatal(insertErr)
+		}
+		c.JSON(http.StatusOK, gin.H{"userRegistered": true})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"userRegistered": false})
 }
 
 func loginUser(c *gin.Context) {
-	email := c.QueryMap("email")
-	password := c.PostFormMap("password")
+	var json Login
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	fmt.Printf("email: %v; password: %v", email, password)
+	// if json.Email == "" && json.Password == "" {
+	// 	return
+	// }
 
-	c.JSON(http.StatusOK,
-		gin.H{
-			"loggedIn": "true",
-		})
+	row := db.QueryRow(`SELECT email, password FROM users WHERE password = $1`, json.Password)
+
+	var user User
+	switch err := row.Scan(&user.Email, &user.Password); err {
+	case sql.ErrNoRows:
+		fmt.Println("No rows were returned!")
+		c.JSON(http.StatusUnauthorized, gin.H{"Could not find user.": err.Error()})
+		return
+	case nil:
+		//create jwt
+		//  token, err := createToken("authToken")
+		//  if err != nil{
+		// 	return
+		//  }
+		// c.Header("Authorization", token);
+		c.JSON(http.StatusOK, gin.H{"user": user})
+		// fmt.Println(user.Email, user.Password)
+	default:
+		panic(err)
+	}
 }
 
 func main() {
@@ -104,7 +148,7 @@ func main() {
 
 	router.GET("/user", getUser)
 	router.POST("/login", loginUser)
-	router.POST("/register")
+	router.POST("/register", registerUser)
 
 	router.Run("localhost:8000")
 }

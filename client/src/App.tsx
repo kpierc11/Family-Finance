@@ -3,14 +3,22 @@ import "./App.css";
 import DashboardNavigation from "../components/DashboardNavigation";
 import Home from "./pages/Home";
 import Bills from "./pages/Bills";
-import { useState } from "react";
+import { useContext } from "react";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { AuthContext } from "../components/AuthProvider";
 
 function App() {
-const  [loggedIn, setLoggedin] = useState<boolean>(false)
-  if (!loggedIn)
-  {
-    return <Login></Login>
+  const {userAuthenticated, onLogin, onLogout} = useContext(AuthContext);
+
+  if (!userAuthenticated) {
+    return (
+      <Routes>
+        <Route index path="/" element={<Login />} />
+        <Route index path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Routes>
+    );
   }
   return (
     <Routes>
