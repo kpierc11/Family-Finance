@@ -17,9 +17,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Outlet } from "react-router";
-import { Avatar } from "@mui/material";
 import AccountMenu from "../components/AccountMenu";
-import { ThreeP } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -56,30 +54,19 @@ export default function DashboardNavigation(props: Props) {
       <Toolbar />
       <Divider />
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        <Typography sx={{fontWeight:"bold", marginLeft:2}}>General</Typography>
+        {[{name:"Dashboard", icon:<InboxIcon />, url:""}].map(({name,icon,url}, index) => (
+          <ListItem key={index} disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {icon}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={name} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
       <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
     </div>
   );
 
@@ -97,6 +84,7 @@ export default function DashboardNavigation(props: Props) {
           ml: { sm: `${drawerWidth}px` },
           background: "transparent",
           boxShadow: "none",
+
         }}
       >
         <Toolbar>

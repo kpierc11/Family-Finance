@@ -6,9 +6,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -25,6 +27,12 @@ type Login struct {
 	Email    string
 	Password string
 }
+
+var (
+	key []byte
+	t   *jwt.Token
+	s   string
+)
 
 func getUser(c *gin.Context) {
 	//See what the request is and any data associated with it.
@@ -94,17 +102,52 @@ func loginUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"Could not find user.": err.Error()})
 		return
 	case nil:
-		//create jwt
-		//  token, err := createToken("authToken")
-		//  if err != nil{
-		// 	return
-		//  }
-		// c.Header("Authorization", token);
-		c.JSON(http.StatusOK, gin.H{"user": user})
-		// fmt.Println(user.Email, user.Password)
+		// cookie := http.Cookie{
+		// 	Name:     "access_token",
+		// 	Value:    s,
+		// 	Path:     "/",
+		// 	Expires:  time.Now().Add(24 * time.Hour),
+		// 	MaxAge:   86400,
+		// 	HttpOnly: true,
+		// 	SameSite: http.SameSiteLaxMode,
+		// }
+
+		c.SetCookieData(&http.Cookie{
+			Name:     "access_token",
+			Value:    s,
+			Path:     "/",
+			Expires:  time.Now().Add(24 * time.Hour),
+			MaxAge:   86400,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		})
+
+		c.JSON(http.StatusOK, "ok")
 	default:
 		panic(err)
 	}
+}
+
+func verifyToken(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+
+	if tokenString == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+		return
+	}
+
+	if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+		tokenString = tokenString[7:]
+	}
+
+	fmt.Printf("Token String: %v", tokenString)
+
+	// token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+	// 	return jwtSecret, nil
+	// })
+
+	//fmt.Printf("Token %v", token)
+
 }
 
 func main() {
@@ -114,6 +157,21 @@ func main() {
 	if err != nil {
 		log.Print("No .env file found")
 	}
+
+	key := []byte(os.Getenv("JWT_SECRET"))
+
+	t = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"iss": "my-auth-server",
+		"sub": "john",
+		"foo": 2,
+	})
+
+	s, err = t.SignedString(key)
+	if err != nil {
+		log.Fatalf("Failed to sign key %v", err)
+	}
+
+	fmt.Println(s)
 
 	directory, err := os.Getwd()
 	if err != nil {
@@ -149,6 +207,7 @@ func main() {
 	router.GET("/user", getUser)
 	router.POST("/login", loginUser)
 	router.POST("/register", registerUser)
+	router.POST("/verify-token", verifyToken)
 
 	router.Run("localhost:8000")
 }
