@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -89,10 +90,6 @@ func loginUser(c *gin.Context) {
 		return
 	}
 
-	// if json.Email == "" && json.Password == "" {
-	// 	return
-	// }
-
 	row := db.QueryRow(`SELECT email, password FROM users WHERE password = $1`, json.Password)
 
 	var user User
@@ -102,23 +99,13 @@ func loginUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"Could not find user.": err.Error()})
 		return
 	case nil:
-		// cookie := http.Cookie{
-		// 	Name:     "access_token",
-		// 	Value:    s,
-		// 	Path:     "/",
-		// 	Expires:  time.Now().Add(24 * time.Hour),
-		// 	MaxAge:   86400,
-		// 	HttpOnly: true,
-		// 	SameSite: http.SameSiteLaxMode,
-		// }
-
 		c.SetCookieData(&http.Cookie{
 			Name:     "access_token",
 			Value:    s,
 			Path:     "/",
-			Expires:  time.Now().Add(24 * time.Hour),
-			MaxAge:   86400,
+			Expires:  time.Now().Add(60 * time.Minute),
 			HttpOnly: true,
+			Secure:   false,
 			SameSite: http.SameSiteLaxMode,
 		})
 
@@ -129,24 +116,33 @@ func loginUser(c *gin.Context) {
 }
 
 func verifyToken(c *gin.Context) {
-	tokenString := c.GetHeader("Authorization")
+	tokenString, err := c.Cookie("access_token")
 
-	if tokenString == "" {
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
 		return
 	}
 
-	if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
-		tokenString = tokenString[7:]
+	//methods := []string{"HMAC"}
+
+	//options := jwt.WithValidMethods(methods)
+
+	parsedToken, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
+		return key, nil
+	})
+
+	switch {
+	case parsedToken.Valid:
+		c.JSON(http.StatusOK, gin.H{"success": "Token Validated"})
+	case errors.Is(err, jwt.ErrTokenMalformed):
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token Malformed"})
+	case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Signature"})
+	case errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet):
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token Expired"})
+	default:
+		c.JSON(http.StatusUnauthorized, "Un Authorized")
 	}
-
-	fmt.Printf("Token String: %v", tokenString)
-
-	// token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-	// 	return jwtSecret, nil
-	// })
-
-	//fmt.Printf("Token %v", token)
 
 }
 
@@ -158,7 +154,8 @@ func main() {
 		log.Print("No .env file found")
 	}
 
-	key := []byte(os.Getenv("JWT_SECRET"))
+	//Create new JWT Token
+	key = []byte(os.Getenv("JWT_SECRET"))
 
 	t = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss": "my-auth-server",
@@ -201,6 +198,10 @@ func main() {
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"}
+	config.AllowCredentials = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization"}
+	config.MaxAge = 12 * time.Hour
 
 	router.Use(cors.New(config))
 

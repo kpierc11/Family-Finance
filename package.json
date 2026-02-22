@@ -1,0 +1,24 @@
+{
+  "name": "family-finance",
+  "version": "1.0.0",
+  "description": "A simple and modern web application for managing family finances, built with **react.js** on the frontend and **Go** on the backend.",
+  "main": "index.js",
+  "scripts": {
+    "start:frontend": "npm run dev --prefix client",
+    "start:backend": "cd serverGo && go run .",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kpierc11/Family-Finance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kpierc11/Family-Finance/issues"
+  },
+  "homepage": "https://github.com/kpierc11/Family-Finance#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
