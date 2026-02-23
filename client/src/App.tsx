@@ -3,10 +3,9 @@ import "./App.css";
 import DashboardNavigation from "../components/DashboardNavigation";
 import Home from "./pages/Home";
 import Bills from "./pages/Bills";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { AuthContext } from "../components/AuthProvider";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -15,11 +14,7 @@ const supabase = createClient(
 );
 
 function App() {
-  //const { userAuthenticated, onLogin, onLogout } = useContext(AuthContext);
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
   const [claims, setClaims] = useState(null);
-  // Check URL params on initial render
   const params = new URLSearchParams(window.location.search);
   const hasTokenHash = params.get("token_hash");
   const [verifying, setVerifying] = useState(!!hasTokenHash);
@@ -27,28 +22,6 @@ function App() {
   const [authSuccess, setAuthSuccess] = useState(false);
 
   useEffect(() => {
-    // Check if we have token_hash in URL (magic link callback)
-    const params = new URLSearchParams(window.location.search);
-    const token_hash = params.get("token_hash");
-    const type = params.get("type");
-    if (token_hash) {
-      // Verify the OTP token
-      supabase.auth
-        .verifyOtp({
-          token_hash,
-          type: type || "email",
-        })
-        .then(({ error }) => {
-          if (error) {
-            setAuthError(error.message);
-          } else {
-            setAuthSuccess(true);
-            // Clear URL params
-            window.history.replaceState({}, document.title, "/");
-          }
-          setVerifying(false);
-        });
-    }
     // Check for existing session using getClaims
     supabase.auth.getClaims().then(({ data: { claims } }) => {
       setClaims(claims);
@@ -64,26 +37,6 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    if (error) {
-      alert(error.error_description || error.message);
-    } else {
-      alert("Check your email for the login link!");
-    }
-    setLoading(false);
-  };
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setClaims(null);
-  };
   // Show verification state
   if (verifying) {
     return (
@@ -94,24 +47,7 @@ function App() {
       </div>
     );
   }
-  // Show auth error
-  if (authError) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>✗ Authentication failed</p>
-        <p>{authError}</p>
-        <button
-          onClick={() => {
-            setAuthError(null);
-            window.history.replaceState({}, document.title, "/");
-          }}
-        >
-          Return to login
-        </button>
-      </div>
-    );
-  }
+
   // Show auth success (briefly before claims load)
   if (authSuccess && !claims) {
     return (
@@ -126,7 +62,8 @@ function App() {
   if (claims) {
     return (
       <Routes>
-        <Route path="/" element={<DashboardNavigation />}>
+        <Route path="/" element={<DashboardNavigation />}></Route>
+        <Route path="/dashboard" element={<DashboardNavigation />}>
           <Route index element={<Home />} />
           <Route path="analytics" element={<Bills />} />
         </Route>
@@ -137,8 +74,8 @@ function App() {
   return (
     <Routes>
       <Route index path="/" element={<Login />} />
-      <Route index path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
+      <Route index path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 }

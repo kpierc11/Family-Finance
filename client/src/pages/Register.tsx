@@ -1,33 +1,31 @@
 import { Box, Button, Link, Paper, TextField, Typography } from "@mui/material";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
+
 
 export default function Register() {
-  const handleLoginSubmit = (e: any) => {
+  const handleLoginSubmit = async (e: any) => {
     e.preventDefault();
     const email = document.querySelector<HTMLInputElement>("#email");
     const password = document.querySelector<HTMLInputElement>("#password");
 
     if (email && password) {
-      fetch("http://localhost:8000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const { data, error } = await supabase.auth.signUp({
+        email: email.value,
+        password: password.value,
+        options: {
+          emailRedirectTo: "https://example.com/welcome",
         },
-        body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
-      })
-        .then((result) => {
-          return result.json();
-        })
-        .then((data) => {
-          console.log(data);
-          if (data.userRegistered) {
-            alert(data.message || "Registration Succeeded");
-          } else {
-            alert(data.message || "Registration failed");
-          }
-        });
+      });
+
+      if(error){
+        console.log("Error:",error)
+      }
+
     }
   };
 

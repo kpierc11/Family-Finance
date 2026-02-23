@@ -11,7 +11,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -52,21 +51,21 @@ export default function DashboardNavigation(props: Props) {
   const drawer = (
     <div>
       <Toolbar />
-      <Divider />
       <List>
-        <Typography sx={{fontWeight:"bold", marginLeft:2}}>General</Typography>
-        {[{name:"Dashboard", icon:<InboxIcon />, url:""}].map(({name,icon,url}, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {icon}
-              </ListItemIcon>
-              <ListItemText primary={name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        <Typography sx={{ fontWeight: "bold", marginLeft: 2 }}>
+          General
+        </Typography>
+        {[{ name: "Dashboard", icon: <InboxIcon />, url: "/dashboard" },{ name: "Bills", icon: <InboxIcon />, url: "/bills" }].map(
+          ({ name, icon }, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={name} />
+              </ListItemButton>
+            </ListItem>
+          ),
+        )}
       </List>
-      <Divider />
     </div>
   );
 
@@ -84,7 +83,6 @@ export default function DashboardNavigation(props: Props) {
           ml: { sm: `${drawerWidth}px` },
           background: "transparent",
           boxShadow: "none",
-
         }}
       >
         <Toolbar>

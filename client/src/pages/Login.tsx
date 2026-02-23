@@ -9,14 +9,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { AuthContext } from "../../components/AuthProvider";
-import { use, useContext, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
 
 export default function Login() {
-  const { onLogin } = useContext(AuthContext);
   const [loggingIn, setLoggingIn] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
-  const [helperText, setHelperText] = useState<string>("");
+  const navigate = useNavigate();
 
   const validateInput = () => {};
 
@@ -39,38 +44,16 @@ export default function Login() {
     setLoggingIn(true);
     setError(false);
 
-    try {
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials:"include",
-        body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
-      });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    });
 
-      if (response.status === 401) {
-        console.log("Could not log in user with current credentials");
-        setError(true);
-        return;
-      }
-
-      const isLoggedIn = await response.json();
-
-      if (!isLoggedIn) {
-        setError(true);
-        return;
-      }
-
-      onLogin();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoggingIn(false);
+    if (error) {
+      console.log("Error:", error);
     }
+
+    navigate("/dashboard");
   };
 
   if (loggingIn) {
