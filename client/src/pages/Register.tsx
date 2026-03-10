@@ -6,7 +6,6 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
-
 export default function Register() {
   const handleLoginSubmit = async (e: any) => {
     e.preventDefault();
@@ -22,10 +21,9 @@ export default function Register() {
         },
       });
 
-      if(error){
-        console.log("Error:",error)
+      if (error) {
+        console.log("Error:", error);
       }
-
     }
   };
 

@@ -1,12 +1,13 @@
 import { Route, Routes } from "react-router";
 import "./App.css";
 import DashboardNavigation from "../components/DashboardNavigation";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
 import { useEffect, useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { createClient } from "@supabase/supabase-js";
+
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -62,10 +63,9 @@ function App() {
   if (claims) {
     return (
       <Routes>
-        <Route path="/" element={<DashboardNavigation />}></Route>
-        <Route path="/dashboard" element={<DashboardNavigation />}>
-          <Route index element={<Home />} />
-          <Route path="analytics" element={<Bills />} />
+        <Route path="/" element={<DashboardNavigation />}>
+          <Route index element={<Dashboard />}/>
+          <Route path="/bills" element={<Bills />} />
         </Route>
       </Routes>
     );
@@ -73,8 +73,8 @@ function App() {
   // Show login form
   return (
     <Routes>
-      <Route index path="/" element={<Login />} />
-      <Route index path="/login" element={<Login />} />
+     <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>
   );

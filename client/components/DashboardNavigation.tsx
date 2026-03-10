@@ -2,7 +2,8 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -17,6 +18,8 @@ import Typography from "@mui/material/Typography";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Outlet } from "react-router";
 import AccountMenu from "../components/AccountMenu";
+import { Link } from "react-router";
+import { useColorScheme } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -32,6 +35,7 @@ export default function DashboardNavigation(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+  const { mode, setMode } = useColorScheme();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -48,6 +52,10 @@ export default function DashboardNavigation(props: Props) {
     }
   };
 
+  const handleThemeToggle = (mode: any) => {
+    setMode(mode);
+  };
+
   const drawer = (
     <div>
       <Toolbar />
@@ -55,16 +63,21 @@ export default function DashboardNavigation(props: Props) {
         <Typography sx={{ fontWeight: "bold", marginLeft: 2 }}>
           General
         </Typography>
-        {[{ name: "Dashboard", icon: <InboxIcon />, url: "/dashboard" },{ name: "Bills", icon: <InboxIcon />, url: "/bills" }].map(
-          ({ name, icon }, index) => (
-            <ListItem key={index} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{icon}</ListItemIcon>
-                <ListItemText primary={name} />
-              </ListItemButton>
-            </ListItem>
-          ),
-        )}
+        {[
+          { name: "Dashboard", icon: <InboxIcon />, url: "/" },
+          { name: "Bills", icon: <InboxIcon />, url: "/bills" },
+        ].map(({ name, icon, url }, index) => (
+          <ListItem key={index} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={url}
+              selected={location.pathname === url}
+            >
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={name} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
     </div>
   );
@@ -104,6 +117,17 @@ export default function DashboardNavigation(props: Props) {
               gap: 2,
             }}
           >
+            <IconButton
+              onClick={() =>
+                handleThemeToggle(mode === "dark" ? "light" : "dark")
+              }
+            >
+              {mode === "dark" ? (
+                <LightModeIcon />
+              ) : (
+                <DarkModeIcon sx={{ color: "black" }} />
+              )}
+            </IconButton>
             <Box
               sx={{
                 display: "flex",

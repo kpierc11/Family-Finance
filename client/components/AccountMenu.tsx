@@ -1,10 +1,10 @@
-import { Avatar } from "@mui/material";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router";
+import { Avatar } from "@mui/material";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -29,7 +29,7 @@ export default function AccountMenu() {
       console.log("Error:", error);
       return;
     }
-    navigate("/login");
+    navigate(0);
   };
 
   return (

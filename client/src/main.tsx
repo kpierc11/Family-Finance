@@ -5,30 +5,26 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 
 const shadows = Array(25).fill("none") as string[];
 
-shadows[1] = `
-  rgba(99, 99, 99, 0.2) 0px 2px 8px 0px
-`; // stronger card
 
-shadows[2] = `
-  0 1px 2px rgba(0, 0, 0, 0.08),
-  0 2px 4px rgba(0, 0, 0, 0.08)
-`; // Trello
+// shadows[1] = `
+//   rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
+// `; // Trello
 
 const theme = createTheme({
-  palette: {
-    mode: "light",
+  colorSchemes: {
+    dark: true,
   },
-  shadows: shadows as any,
+ // shadows: shadows as any,
   shape: {
     borderRadius: 8,
   },
 });
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <CssBaseline></CssBaseline>
-    <ThemeProvider theme={theme}>
+  <ThemeProvider theme={theme}>
+    <BrowserRouter>
+      <CssBaseline></CssBaseline>
       <App />
-    </ThemeProvider>
-  </BrowserRouter>,
+    </BrowserRouter>
+  </ThemeProvider>,
 );

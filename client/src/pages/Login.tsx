@@ -44,16 +44,25 @@ export default function Login() {
     setLoggingIn(true);
     setError(false);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.value,
-      password: password.value,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value,
+      });
 
-    if (error) {
-      console.log("Error:", error);
+      if (data.session) {
+        navigate("/", { viewTransition: true });
+      }
+
+      if (error) {
+        setError(true);
+      }
+    } catch (error) {
+      setError(true);
+      console.log(error);
+    } finally {
+      setLoggingIn(false);
     }
-
-    navigate("/dashboard");
   };
 
   if (loggingIn) {
@@ -81,7 +90,7 @@ export default function Login() {
         height: "100vh",
       }}
     >
-      <Paper elevation={2} sx={{ padding: 2 }}>
+      <Paper elevation={1} sx={{ padding: 2 }}>
         <Box sx={{ padding: 2 }}>
           <Typography variant={"h4"}>Sign In</Typography>
           {error ? (
