@@ -12,7 +12,7 @@ const shadows = Array(25).fill("none") as string[];
 
 const theme = createTheme({
   colorSchemes: {
-    dark: true,
+    dark: false,
   },
  // shadows: shadows as any,
   shape: {

@@ -1,17 +1,23 @@
+import { VisibilityOff, Visibility, EmailOutlined, Lock } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
   Box,
   Button,
   CircularProgress,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
   Link,
+  OutlinedInput,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import LockOutlineIcon from "@mui/icons-material/LockOutline";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -24,6 +30,22 @@ export default function Login() {
   const navigate = useNavigate();
 
   const validateInput = () => {};
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+  };
 
   const handleLoginSubmit = async (e: any) => {
     e.preventDefault();
@@ -50,13 +72,15 @@ export default function Login() {
         password: password.value,
       });
 
-      if (data.session) {
-        navigate("/", { viewTransition: true });
-      }
-
       if (error) {
         setError(true);
+        return;
       }
+
+      if (data.session) {
+        navigate(0);
+      }
+
     } catch (error) {
       setError(true);
       console.log(error);
@@ -90,7 +114,7 @@ export default function Login() {
         height: "100vh",
       }}
     >
-      <Paper elevation={1} sx={{ padding: 2 }}>
+      <Paper elevation={1} sx={{ padding: 2, width:"100%", maxWidth:450, marginLeft:"4%", marginRight:"4%" }}>
         <Box sx={{ padding: 2 }}>
           <Typography variant={"h4"}>Sign In</Typography>
           {error ? (
@@ -114,26 +138,57 @@ export default function Login() {
           noValidate
           autoComplete="off"
         >
-          <TextField
-            onBlur={validateInput}
-            error={error}
-            helperText="Please enter a valid email."
-            type="email"
-            id="email"
-            label="Email"
-            variant="filled"
-            name="email"
-            required
-          />
-          <TextField
-            error={error}
-            id="password"
-            label="Password"
-            variant="filled"
-            type="password"
-            name="password"
-            required
-          />
+          <FormControl sx={{ m: 1 }} variant="outlined">
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <OutlinedInput
+              onBlur={validateInput}
+              error={error}
+              type="email"
+              id="email"
+              label="Email"
+              name="email"
+              required
+              startAdornment={
+                <InputAdornment position="start">
+                  <EmailOutlined />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          <FormControl sx={{ m: 1 }} variant="outlined">
+            <InputLabel htmlFor="password">
+              Password
+            </InputLabel>
+            <OutlinedInput
+              id="password"
+              type={showPassword ? "text" : "password"}
+              error={error}
+              required
+              startAdornment={
+                <InputAdornment position="start">
+                  <LockOutlineIcon/>
+                </InputAdornment>
+              }
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={
+                      showPassword
+                        ? "hide the password"
+                        : "display the password"
+                    }
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+            />
+          </FormControl>
           <Typography sx={{ marginTop: 2, marginBottom: 2 }}>
             Don't have an account? <Link href="/register">Register Here</Link>
           </Typography>
